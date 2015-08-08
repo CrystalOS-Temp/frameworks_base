@@ -5595,7 +5595,10 @@ public final class Settings {
         };
 
         /**
+         * Three Finger Gesture from Oppo
+         * @hide
          */
+        public static final String THREE_FINGER_GESTURE = "three_finger_gesture";
 
         /**
          * @hide
@@ -5661,7 +5664,7 @@ public final class Settings {
          */
         @Readable
         public static final String GAMESPACE_SUPPRESS_FULLSCREEN_INTENT = "gamespace_suppress_fullscreen_intent";
-
+        
         /**
          * These are all public system settings
          *
