@@ -5285,6 +5285,13 @@ public final class Settings {
          */
         public static final String UDFPS_HAPTIC_FEEDBACK = "udfps_haptic_feedback";
 
+        /**
+         * Toast icon
+         * @hide
+         */
+        @Readable
+        public static final String TOAST_ICON = "toast_icon";
+
         //ADD_STUFF_ABOVE_ME
         /**
          * Keys we no longer back up under the current schema, but want to continue to
