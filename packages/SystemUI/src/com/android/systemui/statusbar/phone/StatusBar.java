@@ -2689,7 +2689,7 @@ public class StatusBar extends SystemUI implements
                     mRemoteInputManager.closeRemoteInputs();
                     if (mBubblesOptional.isPresent() && mBubblesOptional.get().isStackExpanded()) {
                         mBubblesOptional.get().collapseStack();
-                }
+		    }
                     if (mLockscreenUserManager.isCurrentProfile(getSendingUserId())) {
                         int flags = CommandQueue.FLAG_EXCLUDE_NONE;
                         String reason = intent.getStringExtra("reason");
@@ -2720,8 +2720,12 @@ public class StatusBar extends SystemUI implements
                     break;
                 case DevicePolicyManager.ACTION_SHOW_DEVICE_MONITORING_DIALOG:
                     mQSPanelController.showDeviceMonitoringDialog();
+<<<<<<< HEAD
                     break;
              }
+=======
+            }
+>>>>>>> d32408c23e1d (SystemUI: handle camera launch gesture from keyhandler)
             Trace.endSection();
         }
     };

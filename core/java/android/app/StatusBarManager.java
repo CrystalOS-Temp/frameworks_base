@@ -209,7 +209,6 @@ public class StatusBarManager {
     /** @hide */
     public static final int CAMERA_LAUNCH_SOURCE_SCREEN_GESTURE = 3;
 
-
     @UnsupportedAppUsage
     private Context mContext;
     private IStatusBarService mService;
