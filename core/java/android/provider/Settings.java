@@ -5627,6 +5627,12 @@ public final class Settings {
          * @hide
          */
         public static final String SHOW_APP_VOLUME = "show_app_volume";
+
+        /* Whether to enable status and navigation bar color in battery saver mode.
+         * Heads up timeout configuration
+         * @hide
+         */
+        public static final String HEADS_UP_TIMEOUT = "heads_up_timeout";
 		
 	/**
          * Whether to enable spoofing for streaming apps
