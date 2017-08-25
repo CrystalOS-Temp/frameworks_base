@@ -163,7 +163,6 @@ public class BatteryManager {
     @SystemApi
     public static final String EXTRA_EVENT_TIMESTAMP = "android.os.extra.EVENT_TIMESTAMP";
 
-
     /**
      * Extra for {@link android.content.Intent#ACTION_BATTERY_CHANGED}:
      * boolean value to detect fast charging
@@ -221,6 +220,13 @@ public class BatteryManager {
      * {@hide}
      */
     public static final String EXTRA_PLUGGED_RAW = "plugged_raw";
+
+    /**
+     * Extra for {@link android.content.Intent#ACTION_BATTERY_CHANGED}:
+     * boolean value to indicate OEM fast charging
+     * {@hide}
+     */
+    public static final String EXTRA_OEM_FAST_CHARGER = "oem_fast_charger";
 
     public static final int BATTERY_PROPERTY_MOD_CHARGE_FULL = 100;
     public static final int BATTERY_PROPERTY_CHARGE_FULL = 101;
