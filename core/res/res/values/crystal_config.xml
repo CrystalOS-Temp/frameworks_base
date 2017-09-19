@@ -31,6 +31,12 @@
         <item>restart</item>
         <item>advanced</item>
         <item>logout</item>
+        <item>users</item>
+        <item>silent</item>
+        <item>screenshot</item>
+        <item>airplane</item>
+        <item>settings</item>
+        <item>lockdown</item>
     </string-array>
 
 </resources>

@@ -621,7 +621,8 @@ public class GlobalActionsDialogLite implements DialogInterface.OnDismissListene
         CurrentUserProvider currentUser = new CurrentUserProvider();
 
         // make sure emergency affordance action is first, if needed
-        if (mEmergencyAffordanceManager.needsEmergencyAffordance()) {
+        if (Settings.System.getInt(mContext.getContentResolver(),
+                Settings.System.POWERMENU_EMERGENCY, 0) == 1) {
             addIfShouldShowAction(tempActions, new EmergencyAffordanceAction());
             addedKeys.add(GLOBAL_ACTION_KEY_EMERGENCY);
         }
@@ -633,25 +634,37 @@ public class GlobalActionsDialogLite implements DialogInterface.OnDismissListene
                 continue;
             }
             if (GLOBAL_ACTION_KEY_POWER.equals(actionKey)) {
-                addIfShouldShowAction(tempActions, shutdownAction);
+                if (Settings.System.getInt(mContext.getContentResolver(),
+                        Settings.System.POWERMENU_POWER, 1) == 1) {
+                    addIfShouldShowAction(tempActions, shutdownAction);
+                }
             } else if (GLOBAL_ACTION_KEY_AIRPLANE.equals(actionKey)) {
-                addIfShouldShowAction(tempActions, mAirplaneModeOn);
+                if (Settings.System.getInt(mContext.getContentResolver(),
+                        Settings.System.POWERMENU_AIRPLANE, 0) == 1) {
+                    addIfShouldShowAction(tempActions, mAirplaneModeOn);
+                }
             } else if (GLOBAL_ACTION_KEY_BUGREPORT.equals(actionKey)) {
                 if (shouldDisplayBugReport(currentUser.get())) {
                     addIfShouldShowAction(tempActions, new BugReportAction());
                 }
             } else if (GLOBAL_ACTION_KEY_SILENT.equals(actionKey)) {
-                if (mShowSilentToggle) {
+                if (Settings.System.getInt(mContext.getContentResolver(),
+                        Settings.System.POWERMENU_SOUNDPANEL, 0) == 1) {
                     addIfShouldShowAction(tempActions, mSilentModeAction);
                 }
             } else if (GLOBAL_ACTION_KEY_USERS.equals(actionKey)) {
-                if (SystemProperties.getBoolean("fw.power_user_switcher", false)) {
+                if (Settings.System.getInt(mContext.getContentResolver(),
+                        Settings.System.POWERMENU_USERS, 0) == 1) {
                     addUserActions(tempActions, currentUser.get());
                 }
             } else if (GLOBAL_ACTION_KEY_SETTINGS.equals(actionKey)) {
-                addIfShouldShowAction(tempActions, getSettingsAction());
+                if (Settings.System.getInt(mContext.getContentResolver(),
+                        Settings.System.POWERMENU_SETTINGS, 0) != 0) {
+                    addIfShouldShowAction(tempActions, getSettingsAction());
+                }
             } else if (GLOBAL_ACTION_KEY_LOCKDOWN.equals(actionKey)) {
-                if (shouldDisplayLockdown(currentUser.get())) {
+                if (Settings.System.getInt(mContext.getContentResolver(),
+                        Settings.System.POWERMENU_LOCKDOWN, 0) != 0) {
                     addIfShouldShowAction(tempActions, new LockDownAction());
                 }
             } else if (GLOBAL_ACTION_KEY_VOICEASSIST.equals(actionKey)) {
@@ -672,15 +685,22 @@ public class GlobalActionsDialogLite implements DialogInterface.OnDismissListene
                     addIfShouldShowAction(tempActions, new PowerOptionsAction());
                 }
             } else if (GLOBAL_ACTION_KEY_SCREENSHOT.equals(actionKey)) {
-                addIfShouldShowAction(tempActions, new ScreenshotAction());
+                if (Settings.System.getInt(mContext.getContentResolver(),
+                        Settings.System.POWERMENU_SCREENSHOT, 0) == 1) {
+                    addIfShouldShowAction(tempActions, new ScreenshotAction());
+                }
             } else if (GLOBAL_ACTION_KEY_LOGOUT.equals(actionKey)) {
-                if (mDevicePolicyManager.isLogoutEnabled()
+                if (Settings.System.getInt(mContext.getContentResolver(),
+                        Settings.System.POWERMENU_LOGOUT, 0) == 1
                         && currentUser.get() != null
                         && currentUser.get().id != UserHandle.USER_SYSTEM) {
                     addIfShouldShowAction(tempActions, new LogoutAction());
                 }
             } else if (GLOBAL_ACTION_KEY_EMERGENCY.equals(actionKey)) {
-                addIfShouldShowAction(tempActions, new EmergencyDialerAction());
+                if (Settings.System.getInt(mContext.getContentResolver(),
+                        Settings.System.POWERMENU_EMERGENCY, 0) == 1) {
+                    addIfShouldShowAction(tempActions, new EmergencyDialerAction());
+                }
             } else {
                 Log.e(TAG, "Invalid global action key " + actionKey);
             }
@@ -1120,9 +1140,8 @@ public class GlobalActionsDialogLite implements DialogInterface.OnDismissListene
     }
 
     private Action getSettingsAction() {
-        return new SinglePressAction(R.drawable.ic_settings,
+        return new SinglePressAction(com.android.systemui.R.drawable.ic_lock_settings,
                 R.string.global_action_settings) {
-
             @Override
             public void onPress() {
                 Intent intent = new Intent(Settings.ACTION_SETTINGS);
@@ -1189,7 +1208,7 @@ public class GlobalActionsDialogLite implements DialogInterface.OnDismissListene
     @VisibleForTesting
     class LockDownAction extends SinglePressAction {
         LockDownAction() {
-            super(R.drawable.ic_lock_lockdown, R.string.global_action_lockdown);
+            super(com.android.systemui.R.drawable.ic_lock_lock, R.string.global_action_lockdown);
         }
 
         @Override
