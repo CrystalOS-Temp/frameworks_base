@@ -2720,12 +2720,8 @@ public class StatusBar extends SystemUI implements
                     break;
                 case DevicePolicyManager.ACTION_SHOW_DEVICE_MONITORING_DIALOG:
                     mQSPanelController.showDeviceMonitoringDialog();
-<<<<<<< HEAD
                     break;
              }
-=======
-            }
->>>>>>> d32408c23e1d (SystemUI: handle camera launch gesture from keyhandler)
             Trace.endSection();
         }
     };
@@ -3930,6 +3926,10 @@ public class StatusBar extends SystemUI implements
             resolver.registerContentObserver(Settings.System.getUriFor(
                     Settings.System.QS_FOOTER_WARNINGS),
                     false, this, UserHandle.USER_ALL);
+            resolver.registerContentObserver(Settings.System.getUriFor(
+                    Settings.System.HEADS_UP_STOPLIST_VALUES), false, this);
+            resolver.registerContentObserver(Settings.System.getUriFor(
+                    Settings.System.HEADS_UP_BLACKLIST_VALUES), false, this);
         }
 
         @Override
@@ -3953,8 +3953,13 @@ public class StatusBar extends SystemUI implements
 
         public void update() {
             setLockscreenDoubleTapToSleep();
+<<<<<<< HEAD
             setStatusBarWindowViewOptions();
             setQsPanelOptions();
+=======
+            setHeadsUpStoplist();
+            setHeadsUpBlacklist();
+>>>>>>> ef98c2ce1520... SystemUI: HeadsUp blacklists (1/2)
         }
     }
 
@@ -3964,6 +3969,7 @@ public class StatusBar extends SystemUI implements
         }
     }
 
+<<<<<<< HEAD
     private void setStatusBarWindowViewOptions() {
         if (mNotificationShadeWindowViewController != null) {
             mNotificationShadeWindowViewController.setStatusBarWindowViewOptions();
@@ -3974,6 +3980,16 @@ public class StatusBar extends SystemUI implements
         if (mQSPanelController != null) {
             mQSPanelController.updateSettings();
         }
+=======
+    private void setHeadsUpStoplist() {
+        if (mPresenter != null)
+            mPresenter.setHeadsUpStoplist();
+    }
+
+    private void setHeadsUpBlacklist() {
+        if (mPresenter != null)
+            mPresenter.setHeadsUpBlacklist();
+>>>>>>> ef98c2ce1520... SystemUI: HeadsUp blacklists (1/2)
     }
 
     private final BroadcastReceiver mBannerActionBroadcastReceiver = new BroadcastReceiver() {
