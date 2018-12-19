@@ -5503,6 +5503,14 @@ public final class Settings {
         public static final String USE_PHOTOS_SPOOF = "use_photos_spoof";
 		
 	/**
+         * Whether to show volume panel on the left side
+         * Defaults to com.android.systemui.R.bool.config_audioPanelOnLeftSide
+         * @hide
+         */
+        @Readable
+        public static final String VOLUME_PANEL_ON_LEFT = "volume_panel_on_left";
+		
+        /**
          * These are all public system settings
          *
          * @hide
