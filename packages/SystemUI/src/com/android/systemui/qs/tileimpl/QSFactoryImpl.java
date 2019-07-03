@@ -60,6 +60,7 @@ import com.android.systemui.qs.tiles.UiModeNightTile;
 import com.android.systemui.qs.tiles.SoundTile;
 import com.android.systemui.qs.tiles.ScreenshotTile;
 import com.android.systemui.qs.tiles.UserTile;
+import com.android.systemui.qs.tiles.VpnTile;
 import com.android.systemui.qs.tiles.WifiTile;
 import com.android.systemui.qs.tiles.WorkModeTile;
 import com.android.systemui.util.leak.GarbageMonitor;
@@ -117,6 +118,8 @@ public class QSFactoryImpl implements QSFactory {
     private final Provider<FPSInfoTile> mFPSInfoTileProvider;
     private final Provider<AODTile> mAODTileProvider;
     private final Provider<GamingModeTile> mGamingModeTileProvider;
+    private final Provider<VpnTile> mVpnTileProvider;
+
     private final Lazy<QSHost> mQsHostLazy;
     private final Provider<CustomTile.Builder> mCustomTileBuilderProvider;
 
@@ -163,6 +166,7 @@ public class QSFactoryImpl implements QSFactory {
             Provider<DataSwitchTile> dataSwitchTileProvider,
             Provider<FPSInfoTile> fpsInfoTileProvider,
             Provider<AODTile> aodTileProvider,
+	    Provider<VpnTile> vpnTileProvider,
             Provider<GamingModeTile> gamingModeTileProvider) {
         mQsHostLazy = qsHostLazy;
         mCustomTileBuilderProvider = customTileBuilderProvider;
@@ -207,6 +211,7 @@ public class QSFactoryImpl implements QSFactory {
         mFPSInfoTileProvider = fpsInfoTileProvider;
         mAODTileProvider = aodTileProvider;
         mGamingModeTileProvider = gamingModeTileProvider;
+	mVpnTileProvider = vpnTileProvider;
     }
 
     public QSTile createTile(String tileSpec) {
@@ -299,6 +304,8 @@ public class QSFactoryImpl implements QSFactory {
                 return mAODTileProvider.get();
             case "gamingmode":
                 return mGamingModeTileProvider.get();
+            case "vpn":
+                return mVpnTileProvider.get();
         }
 
         // Custom tiles
