@@ -198,6 +198,11 @@ public final class BatteryService extends SystemService {
     private boolean mHasDashCharger;
     private boolean mLastDashCharger;
 
+    //Warp Charging
+    private boolean mWarpCharger;
+    private boolean mHasWarpCharger;
+    private boolean mLastWarpCharger;
+
     private Led mLed;
 
     private boolean mSentLowBatteryBroadcast = false;
@@ -246,6 +251,9 @@ public final class BatteryService extends SystemService {
 
         mHasDashCharger = mContext.getResources().getBoolean(
                 com.android.internal.R.bool.config_hasDashCharger);
+        mHasWarpCharger = mContext.getResources().getBoolean(
+                com.android.internal.R.bool.config_hasWarpCharger);
+
         // watch for invalid charger messages if the invalid_charger switch exists
         if (new File("/sys/devices/virtual/switch/invalid_charger/state").exists()) {
             UEventObserver invalidChargerObserver = new UEventObserver() {
@@ -581,6 +589,7 @@ public final class BatteryService extends SystemService {
         shutdownIfOverTempLocked();
 
         mDashCharger = mHasDashCharger && isDashCharger();
+        mWarpCharger = mHasWarpCharger && isWarpCharger();
 
         if (force || (mHealthInfo.batteryStatus != mLastBatteryStatus ||
                 mHealthInfo.batteryHealth != mLastBatteryHealth ||
@@ -598,7 +607,8 @@ public final class BatteryService extends SystemService {
                 mBatteryModProps.modFlag != mLastModFlag ||
                 mBatteryModProps.modType != mLastModType ||
                 mBatteryModProps.modPowerSource != mLastModPowerSource ||
-                mDashCharger != mLastDashCharger)) {
+                mDashCharger != mLastDashCharger ||
+                mWarpCharger != mLastWarpCharger)) {
 
             if (mPlugType != mLastPlugType) {
                 if (mLastPlugType == BATTERY_PLUGGED_NONE) {
@@ -775,6 +785,7 @@ public final class BatteryService extends SystemService {
             mLastModType = mBatteryModProps.modType;
             mLastModPowerSource = mBatteryModProps.modPowerSource;
             mLastDashCharger = mDashCharger;
+            mLastWarpCharger = mWarpCharger;
         }
     }
 
@@ -809,6 +820,8 @@ public final class BatteryService extends SystemService {
         intent.putExtra(BatteryManager.EXTRA_MOD_TYPE, mBatteryModProps.modType);
         intent.putExtra(BatteryManager.EXTRA_MOD_POWER_SOURCE, mBatteryModProps.modPowerSource);
         intent.putExtra(BatteryManager.EXTRA_DASH_CHARGER, mDashCharger);
+        intent.putExtra(BatteryManager.EXTRA_WARP_CHARGER, mWarpCharger);
+
         if (DEBUG) {
             Slog.d(TAG, "Sending ACTION_BATTERY_CHANGED. scale:" + BATTERY_SCALE
                     + ", info:" + mHealthInfo.toString());
@@ -861,6 +874,20 @@ public final class BatteryService extends SystemService {
         mContext.sendBroadcastAsUser(intent, UserHandle.ALL,
                 android.Manifest.permission.BATTERY_STATS);
         mLastBatteryLevelChangedSentMs = SystemClock.elapsedRealtime();
+    }
+
+    private boolean isWarpCharger() {
+        try {
+            FileReader file = new FileReader("/sys/class/power_supply/battery/fastchg_status");
+            BufferedReader br = new BufferedReader(file);
+            String state = br.readLine();
+            br.close();
+            file.close();
+            return "1".equals(state);
+        } catch (FileNotFoundException e) {
+        } catch (IOException e) {
+        }
+        return false;
     }
 
     private boolean isDashCharger() {
