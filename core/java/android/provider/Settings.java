@@ -16978,6 +16978,7 @@ public final class Settings {
          * Output: Nothing.
          * @hide
          */
+        @SdkConstant(SdkConstant.SdkConstantType.ACTIVITY_INTENT_ACTION)
         public static final String ACTION_MOBILE_DATA =
                 "android.settings.panel.action.MOBILE_DATA";
     }
