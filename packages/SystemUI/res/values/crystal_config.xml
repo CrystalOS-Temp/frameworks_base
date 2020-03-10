@@ -26,4 +26,7 @@
      <bool name="config_statusBarBurnInProtection">true</bool>
      <integer name="config_shift_interval">60</integer>
 
+     <!-- FPSInfoService FPS node file path -->
+     <string name="config_fpsInfoSysNode" translatable="false"></string>
+
 </resources>
