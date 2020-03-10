@@ -87,4 +87,9 @@
     <string name="dlg_cancel">@android:string/cancel</string>
     <string name="guts_force_close_app">Close App</string>
 
+    <!-- FPS Info tile -->
+    <string name="quick_settings_fpsinfo_label">FPS Info</string>
+    <string name="accessibility_quick_settings_fpsinfo_off">FPS Info off</string>
+    <string name="accessibility_quick_settings_fpsinfo_on">FPS Info on</string>
+
 </resources>
