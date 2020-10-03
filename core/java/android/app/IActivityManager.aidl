@@ -725,4 +725,9 @@ interface IActivityManager {
 
     /** Blocks until all broadcast queues become idle. */
     void waitForBroadcastIdle();
+
+    /**
+     *  Force full screen for devices with cutout
+     */
+    boolean shouldForceCutoutFullscreen(in String packageName);
 }

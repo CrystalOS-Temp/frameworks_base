@@ -350,6 +350,7 @@ import com.android.internal.util.FastPrintWriter;
 import com.android.internal.util.FrameworkStatsLog;
 import com.android.internal.util.MemInfoReader;
 import com.android.internal.util.Preconditions;
+import com.android.internal.util.crystal.CutoutFullscreenController;
 import com.android.internal.util.function.DecFunction;
 import com.android.internal.util.function.HeptFunction;
 import com.android.internal.util.function.HexFunction;
@@ -1512,6 +1513,9 @@ public class ActivityManagerService extends IActivityManager.Stub
     private ParcelFileDescriptor[] mLifeMonitorFds;
 
     static final HostingRecord sNullHostingRecord = new HostingRecord(null);
+
+    private CutoutFullscreenController mCutoutFullscreenController;
+
     /**
      * Used to notify activity lifecycle events.
      */
@@ -2347,6 +2351,9 @@ public class ActivityManagerService extends IActivityManager.Stub
         mInternal = new LocalService();
         mPendingStartActivityUids = new PendingStartActivityUids(mContext);
         mTraceErrorLogger = new TraceErrorLogger();
+
+        // Force full screen for devices with cutout
+        mCutoutFullscreenController = new CutoutFullscreenController(mContext);
     }
 
     public void setSystemServiceManager(SystemServiceManager mgr) {
@@ -17222,6 +17229,13 @@ public class ActivityManagerService extends IActivityManager.Stub
     static void traceBegin(long traceTag, String methodName, String subInfo) {
         if (Trace.isTagEnabled(traceTag)) {
             Trace.traceBegin(traceTag, methodName + subInfo);
+        }
+    }
+
+    @Override
+    public boolean shouldForceCutoutFullscreen(String packageName) {
+        synchronized (this) {
+            return mCutoutFullscreenController.shouldForceCutoutFullscreen(packageName);
         }
     }
 }
