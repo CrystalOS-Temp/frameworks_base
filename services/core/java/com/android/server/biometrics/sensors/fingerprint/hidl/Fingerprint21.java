@@ -118,7 +118,7 @@ public class Fingerprint21 implements IHwBinder.DeathRecipient, ServiceProvider 
     private int mCurrentUserId = UserHandle.USER_NULL;
     private final boolean mIsUdfps;
     private final int mSensorId;
-    private final boolean mIsPowerbuttonFps;
+    private boolean mIsPowerbuttonFps;
 
     private final class BiometricTaskStackListener extends TaskStackListener {
         @Override
@@ -344,6 +344,34 @@ public class Fingerprint21 implements IHwBinder.DeathRecipient, ServiceProvider 
         } catch (RemoteException e) {
             Slog.e(TAG, "Unable to register user switch observer");
         }
+
+        // TODO(b/179175438): Remove this code block after transition to AIDL.
+        // The existence of config_udfps_sensor_props indicates that the sensor is UDFPS.
+        mIsUdfps = !ArrayUtils.isEmpty(
+                mContext.getResources().getIntArray(R.array.config_udfps_sensor_props));
+
+        // config_is_powerbutton_fps indicates whether device has a power button fingerprint sensor.
+        mIsPowerbuttonFps = mContext.getResources().getBoolean(R.bool.config_is_powerbutton_fps);
+
+        final @FingerprintSensorProperties.SensorType int sensorType;
+        if (mIsUdfps) {
+            sensorType = FingerprintSensorProperties.TYPE_UDFPS_OPTICAL;
+        } else if (mIsPowerbuttonFps) {
+            sensorType = FingerprintSensorProperties.TYPE_POWER_BUTTON;
+        } else {
+            sensorType = FingerprintSensorProperties.TYPE_REAR;
+        }
+
+        // IBiometricsFingerprint@2.1 does not manage timeout below the HAL, so the Gatekeeper HAT
+        // cannot be checked
+        final boolean resetLockoutRequiresHardwareAuthToken = false;
+        final int maxEnrollmentsPerUser = mContext.getResources()
+                .getInteger(R.integer.config_fingerprintMaxTemplatesPerUser);
+
+        mSensorProperties = new FingerprintSensorPropertiesInternal(context, sensorId,
+                Utils.authenticatorStrengthToPropertyStrength(strength), maxEnrollmentsPerUser,
+                new ArrayList<ComponentInfoInternal>() /* componentInfo */, sensorType,
+                resetLockoutRequiresHardwareAuthToken);
     }
 
     public static Fingerprint21 newInstance(@NonNull Context context,
