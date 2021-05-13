@@ -5354,13 +5354,20 @@ public final class Settings {
 
         /**
          * Whether to show the kill app button in notification guts
-         *
          * @hide
          */
         public static final String NOTIFICATION_GUTS_KILL_APP_BUTTON =
                 "notification_guts_kill_app_button";
 
-        /** @hide */
+        /**
+         * Whether auto brightness is applied one shot when screen is turned on
+         * @hide
+         */
+        public static final String AUTO_BRIGHTNESS_ONE_SHOT = "auto_brightness_one_shot";
+
+        /**
+         * Whether to vibrate on back gesture
+         * @hide */
         public static final String BACK_GESTURE_HAPTIC = "back_gesture_haptic";
 
         /**
