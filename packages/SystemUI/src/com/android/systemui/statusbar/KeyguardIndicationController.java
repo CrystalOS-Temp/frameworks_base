@@ -145,6 +145,10 @@ public class KeyguardIndicationController {
     private int mBatteryLevel;
     private boolean mBatteryPresent = true;
     private long mChargingTimeRemaining;
+    private int mChargingCurrent;
+    private int mBatteryCurrentDivider;
+    private double mChargingVoltage;
+    private float mTemperature;
     private String mMessageToShowOnScreenOn;
     protected int mLockScreenMode;
     private boolean mInited;
@@ -195,7 +199,8 @@ public class KeyguardIndicationController {
         mIActivityManager = iActivityManager;
         mFalsingManager = falsingManager;
         mKeyguardBypassController = keyguardBypassController;
-
+        mBatteryCurrentDivider = mContext.getResources()
+                .getInteger(R.integer.config_battCurrentDivider);
     }
 
     /** Call this after construction to finish setting up the instance. */
@@ -766,8 +771,7 @@ public class KeyguardIndicationController {
             Settings.System.LOCKSCREEN_BATTERY_INFO, 1, UserHandle.USER_CURRENT) == 1;
         if (showbatteryInfo) {
             if (mChargingCurrent > 0) {
-                current = (mChargingCurrent < 5 ? (mChargingCurrent * 1000)
-                        : (mChargingCurrent < 4000 ? mChargingCurrent : (mChargingCurrent / 1000)));
+                current = (mChargingCurrent / mBatteryCurrentDivider);
                 batteryInfo = batteryInfo + current + "mA";
             }
             if (mChargingVoltage > 0 && mChargingCurrent > 0) {
