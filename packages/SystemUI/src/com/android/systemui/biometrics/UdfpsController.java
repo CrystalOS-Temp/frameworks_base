@@ -166,6 +166,7 @@ public class UdfpsController implements DozeReceiver {
     private Runnable mAodInterruptRunnable;
     private boolean mOnFingerDown;
     private boolean mAttemptedToDismissKeyguard;
+    private final int mUdfpsVendorCode;
     private Set<Callback> mCallbacks = new HashSet<>();
 
     private boolean mDisableNightMode;
@@ -633,6 +634,7 @@ public class UdfpsController implements DozeReceiver {
 
         udfpsHapticsSimulator.setUdfpsController(this);
 
+        mUdfpsVendorCode = mContext.getResources().getInteger(R.integer.config_udfps_vendor_code);
         mDisableNightMode = mContext.getResources().getBoolean(com.android.internal.R.bool.disable_udfps_night_light);
 
     }
