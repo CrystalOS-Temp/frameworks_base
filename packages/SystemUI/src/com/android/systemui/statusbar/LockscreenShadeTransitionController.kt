@@ -611,7 +611,7 @@ class DragDownHelper(
         statusBarHeaderHeight = context
                 .resources.getDimensionPixelSize(R.dimen.status_bar_header_height_keyguard)
         goToSleep = Runnable {
-            CherishUtils.switchScreenOff(context)
+            CrystalUtils.switchScreenOff(context)
         }
     }
 
