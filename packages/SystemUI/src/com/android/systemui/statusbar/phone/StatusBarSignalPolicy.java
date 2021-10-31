@@ -50,6 +50,8 @@ public class StatusBarSignalPolicy implements SignalCallback,
     private static final String TAG = "StatusBarSignalPolicy";
     private static final boolean DEBUG = Log.isLoggable(TAG, Log.DEBUG);
 
+    private static final String HIDE_QS_CALL_STRENGTH = "hide_qs_call_strength";
+
     private final String mSlotAirplane;
     private final String mSlotMobile;
     private final String mSlotWifi;
@@ -112,13 +114,13 @@ public class StatusBarSignalPolicy implements SignalCallback,
         mActivityEnabled = mContext.getResources().getBoolean(R.bool.config_showActivity);
     }
 
-    /** Call to initilaize and register this classw with the system. */
+    /** Call to initialize and register this class with the system. */
     public void init() {
         if (mInitialized) {
             return;
         }
         mInitialized = true;
-        mTunerService.addTunable(this, StatusBarIconController.ICON_HIDE_LIST);
+        mTunerService.addTunable(this, StatusBarIconController.ICON_HIDE_LIST, HIDE_QS_CALL_STRENGTH);
         mNetworkController.addCallback(this);
         mSecurityController.addCallback(this);
     }
@@ -152,6 +154,10 @@ public class StatusBarSignalPolicy implements SignalCallback,
 
     @Override
     public void onTuningChanged(String key, String newValue) {
+        if (HIDE_QS_CALL_STRENGTH.equals(key)) {
+            mNetworkController.removeCallback(this);
+            mNetworkController.addCallback(this);
+        }
         if (!StatusBarIconController.ICON_HIDE_LIST.equals(key)) {
             return;
         }
@@ -241,14 +247,19 @@ public class StatusBarSignalPolicy implements SignalCallback,
             state.callStrengthResId = statusIcon.icon;
             state.callStrengthDescription = statusIcon.contentDescription;
         }
-        if (mCarrierConfigTracker.getCallStrengthConfig(subId)) {
+        boolean hideCallStrength = mTunerService.getValue(HIDE_QS_CALL_STRENGTH, 0) == 1;
+        if (mCarrierConfigTracker.getCallStrengthConfig(subId) && !hideCallStrength) {
             mIconController.setCallStrengthIcons(mSlotCallStrength,
                     CallIndicatorIconState.copyStates(mCallIndicatorStates));
         } else {
             mIconController.removeIcon(mSlotCallStrength, subId);
         }
-        mIconController.setNoCallingIcons(mSlotNoCalling,
+        if (!hideCallStrength) {
+            mIconController.setNoCallingIcons(mSlotNoCalling,
                 CallIndicatorIconState.copyStates(mCallIndicatorStates));
+        } else {
+            mIconController.removeIcon(mSlotNoCalling, subId);
+        }
     }
 
     @Override
