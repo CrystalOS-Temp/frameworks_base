@@ -28,7 +28,7 @@ import androidx.annotation.Nullable;
 
 import com.android.internal.logging.MetricsLogger;
 
-import com.android.internal.util.arrow.ArrowUtils;
+import com.android.internal.util.crystal.CrystalUtils;
 import com.android.internal.logging.nano.MetricsProto.MetricsEvent;
 import com.android.systemui.qs.QSHost;
 import com.android.systemui.plugins.qs.QSTile.BooleanState;
@@ -65,7 +65,7 @@ public class ScreenshotTile extends QSTileImpl<BooleanState> {
 
     @Override
     public int getMetricsCategory() {
-        return MetricsEvent.ARROW;
+        return MetricsEvent.CRYSTAL;
     }
 
     @Override
@@ -91,7 +91,7 @@ public class ScreenshotTile extends QSTileImpl<BooleanState> {
         try {
              Thread.sleep(1000); //1s
         } catch (InterruptedException ie) {}
-        ArrowUtils.takeScreenshot(mRegion ? false : true);
+        CrystalUtils.takeScreenshot(mRegion ? false : true);
     }
 
     @Override
