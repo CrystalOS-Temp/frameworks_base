@@ -5321,6 +5321,12 @@ public final class Settings {
          */
         public static final String CHARGING_ANIMATION = "charging_animation";
 
+        /**
+         * Whether to play haptic feedback when touching udfps icon
+         * @hide
+         */
+        public static final String UDFPS_HAPTIC_FEEDBACK = "udfps_haptic_feedback";
+
         //ADD_STUFF_ABOVE_ME
         /**
          * Keys we no longer back up under the current schema, but want to continue to
