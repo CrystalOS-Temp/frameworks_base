@@ -32,6 +32,7 @@ import android.content.IntentFilter;
 import android.graphics.PixelFormat;
 import android.graphics.Point;
 import android.graphics.RectF;
+import android.hardware.display.ColorDisplayManager;
 import android.hardware.display.DisplayManager;
 import android.hardware.fingerprint.FingerprintManager;
 import android.hardware.fingerprint.FingerprintSensorPropertiesInternal;
@@ -165,6 +166,10 @@ public class UdfpsController implements DozeReceiver, UdfpsHbmProvider {
     private final int mUdfpsVendorCode;
     private Set<Callback> mCallbacks = new HashSet<>();
 
+    private boolean mDisableNightMode;
+    private boolean mNightModeActive;
+    private int mAutoModeState;
+
     @VisibleForTesting
     public static final AudioAttributes VIBRATION_SONIFICATION_ATTRIBUTES =
             new AudioAttributes.Builder()
@@ -242,6 +247,9 @@ public class UdfpsController implements DozeReceiver, UdfpsHbmProvider {
         @Override
         public void showUdfpsOverlay(int sensorId, int reason,
                 @NonNull IUdfpsOverlayControllerCallback callback) {
+            if (mDisableNightMode && isNightLightEnabled()) {
+                disableNightMode();
+            }
             mFgExecutor.execute(() -> {
                 final UdfpsEnrollHelper enrollHelper;
                 if (reason == IUdfpsOverlayController.REASON_ENROLL_FIND_SENSOR
@@ -257,6 +265,9 @@ public class UdfpsController implements DozeReceiver, UdfpsHbmProvider {
 
         @Override
         public void hideUdfpsOverlay(int sensorId) {
+            if (mDisableNightMode && isNightLightEnabled()) {
+                setNightMode(mNightModeActive, mAutoModeState);
+            }
             mFgExecutor.execute(() -> {
                 mServerRequest = null;
                 updateOverlay();
@@ -614,7 +625,30 @@ public class UdfpsController implements DozeReceiver, UdfpsHbmProvider {
         udfpsHapticsSimulator.setUdfpsController(this);
 
         mUdfpsVendorCode = mContext.getResources().getInteger(R.integer.config_udfps_vendor_code);
+        mDisableNightMode = mContext.getResources().getBoolean(com.android.internal.R.bool.disable_udfps_night_light);
 
+    }
+
+    private boolean isNightLightEnabled() {
+       return Settings.System.getInt(mContext.getContentResolver(),
+                Settings.System.UDFPS_NIGHT_LIGHT, 1) == 1;
+    }
+
+    private void disableNightMode() {
+        ColorDisplayManager colorDisplayManager = mContext.getSystemService(ColorDisplayManager.class);
+        mAutoModeState = colorDisplayManager.getNightDisplayAutoMode();
+        mNightModeActive = colorDisplayManager.isNightDisplayActivated();
+        colorDisplayManager.setNightDisplayActivated(false);
+    }
+
+    private void setNightMode(boolean activated, int autoMode) {
+        ColorDisplayManager colorDisplayManager = mContext.getSystemService(ColorDisplayManager.class);
+        colorDisplayManager.setNightDisplayAutoMode(0);
+        if (autoMode == 0) {
+            colorDisplayManager.setNightDisplayActivated(activated);
+        } else if (autoMode == 1 || autoMode == 2) {
+            colorDisplayManager.setNightDisplayAutoMode(autoMode);
+        }
     }
 
     /**
