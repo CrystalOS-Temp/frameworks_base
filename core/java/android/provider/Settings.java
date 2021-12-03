@@ -5455,6 +5455,11 @@ public final class Settings {
          * @hide
          */
         public static final String ENABLE_RIPPLE_EFFECT = "enable_ripple_effect";
+        /**
+         * UDFPS night light
+         * @hide
+         */
+        public static final String UDFPS_NIGHT_LIGHT = "udfps_night_light";
 
         /**
          * Whether to display sound panel in the power menu

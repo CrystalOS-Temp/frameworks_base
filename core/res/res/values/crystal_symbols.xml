@@ -53,4 +53,7 @@
     <java-symbol type="string" name="unlock_application" />
     <java-symbol type="array" name="config_appLockAllowedSystemApps" />
 
+    <!-- NightLight UDFPS -->
+    <java-symbol type="bool" name="disable_udfps_night_light"/>
+
 </resources>

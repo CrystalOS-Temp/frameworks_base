@@ -34,6 +34,7 @@ import android.graphics.Point;
 import android.graphics.RectF;
 import android.hardware.biometrics.BiometricOverlayConstants;
 import android.hardware.biometrics.SensorLocationInternal;
+import android.hardware.display.ColorDisplayManager;
 import android.hardware.display.DisplayManager;
 import android.hardware.fingerprint.FingerprintManager;
 import android.hardware.fingerprint.FingerprintSensorPropertiesInternal;
@@ -167,6 +168,10 @@ public class UdfpsController implements DozeReceiver {
     private boolean mAttemptedToDismissKeyguard;
     private Set<Callback> mCallbacks = new HashSet<>();
 
+    private boolean mDisableNightMode;
+    private boolean mNightModeActive;
+    private int mAutoModeState;
+
     @VisibleForTesting
     public static final AudioAttributes VIBRATION_SONIFICATION_ATTRIBUTES =
             new AudioAttributes.Builder()
@@ -245,6 +250,9 @@ public class UdfpsController implements DozeReceiver {
         @Override
         public void showUdfpsOverlay(int sensorId, int reason,
                 @NonNull IUdfpsOverlayControllerCallback callback) {
+            if (mDisableNightMode && isNightLightEnabled()) {
+                disableNightMode();
+            }
             mFgExecutor.execute(() -> {
                 final UdfpsEnrollHelper enrollHelper;
                 if (reason == BiometricOverlayConstants.REASON_ENROLL_FIND_SENSOR
@@ -260,6 +268,9 @@ public class UdfpsController implements DozeReceiver {
 
         @Override
         public void hideUdfpsOverlay(int sensorId) {
+            if (mDisableNightMode && isNightLightEnabled()) {
+                setNightMode(mNightModeActive, mAutoModeState);
+            }
             mFgExecutor.execute(() -> {
                 if (mKeyguardUpdateMonitor.isFingerprintDetectionRunning()) {
                     // if we get here, we expect keyguardUpdateMonitor's fingerprintRunningState
@@ -621,6 +632,31 @@ public class UdfpsController implements DozeReceiver {
         context.registerReceiver(mBroadcastReceiver, filter);
 
         udfpsHapticsSimulator.setUdfpsController(this);
+
+        mDisableNightMode = mContext.getResources().getBoolean(com.android.internal.R.bool.disable_udfps_night_light);
+
+    }
+
+    private boolean isNightLightEnabled() {
+       return Settings.System.getInt(mContext.getContentResolver(),
+                Settings.System.UDFPS_NIGHT_LIGHT, 1) == 1;
+    }
+
+    private void disableNightMode() {
+        ColorDisplayManager colorDisplayManager = mContext.getSystemService(ColorDisplayManager.class);
+        mAutoModeState = colorDisplayManager.getNightDisplayAutoMode();
+        mNightModeActive = colorDisplayManager.isNightDisplayActivated();
+        colorDisplayManager.setNightDisplayActivated(false);
+    }
+
+    private void setNightMode(boolean activated, int autoMode) {
+        ColorDisplayManager colorDisplayManager = mContext.getSystemService(ColorDisplayManager.class);
+        colorDisplayManager.setNightDisplayAutoMode(0);
+        if (autoMode == 0) {
+            colorDisplayManager.setNightDisplayActivated(activated);
+        } else if (autoMode == 1 || autoMode == 2) {
+            colorDisplayManager.setNightDisplayAutoMode(autoMode);
+        }
     }
 
     /**

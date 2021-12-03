@@ -60,4 +60,7 @@
           Use with extreme caution. -->
     <string-array name="config_appLockAllowedSystemApps" translatable="false" />
 
+    <!-- NightLight UDFPS -->
+    <bool name="disable_udfps_night_light">false</bool>
+
 </resources>
