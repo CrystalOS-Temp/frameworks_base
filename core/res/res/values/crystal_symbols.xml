@@ -48,4 +48,7 @@
     <!-- Whether device has warp charging support -->
     <java-symbol type="bool" name="config_hasWarpCharger" />
 
+    <!-- NightLight UDFPS -->
+    <java-symbol type="bool" name="disable_udfps_night_light"/>
+
 </resources>

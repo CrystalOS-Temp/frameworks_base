@@ -45,4 +45,7 @@
     <!-- Whether device has warp charging support -->
     <bool name="config_hasWarpCharger">false</bool>
 
+    <!-- NightLight UDFPS -->
+    <bool name="disable_udfps_night_light">false</bool>
+
 </resources>
