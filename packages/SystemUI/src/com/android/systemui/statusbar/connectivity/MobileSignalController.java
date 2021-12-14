@@ -320,7 +320,12 @@ public class MobileSignalController extends SignalController<MobileState, Mobile
             resolver.registerContentObserver(
                     Settings.System.getUriFor(Settings.System.ROAMING_INDICATOR_ICON), false,
                     this, UserHandle.USER_ALL);
-            updateSettings();
+	    resolver.registerContentObserver(
+                    Settings.Secure.getUriFor(Settings.Secure.SHOW_COMBINED_STATUS_BAR_SIGNAL_ICONS), false,
+                    this, UserHandle.USER_ALL);
+           
+	updateSettings();
+
         }
 
         /*
