@@ -32,8 +32,7 @@
         android:layout_height="match_parent"
         android:orientation="horizontal"
         android:layout_gravity="center_vertical|start"
-        android:gravity="center_vertical|start"
-        >
+        android:gravity="center_vertical|start">
 
         <com.android.systemui.statusbar.policy.Clock
             android:id="@+id/clock"

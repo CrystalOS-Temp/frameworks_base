@@ -520,6 +520,8 @@ public class NotificationManagerService extends SystemService {
     protected boolean mInCallStateOffHook = false;
     boolean mNotificationPulseEnabled;
 
+    private boolean mSoundVibScreenOn;
+
     private Uri mInCallNotificationUri;
     private AudioAttributes mInCallNotificationAudioAttributes;
     private float mInCallNotificationVolume;
@@ -1912,6 +1914,8 @@ public class NotificationManagerService extends SystemService {
                         Settings.Secure.LOCK_SCREEN_ALLOW_PRIVATE_NOTIFICATIONS);
         private final Uri LOCK_SCREEN_SHOW_NOTIFICATIONS
                 = Settings.Secure.getUriFor(Settings.Secure.LOCK_SCREEN_SHOW_NOTIFICATIONS);
+        private final Uri NOTIFICATION_SOUND_VIB_SCREEN_ON
+                = Settings.System.getUriFor(Settings.System.NOTIFICATION_SOUND_VIB_SCREEN_ON);
 
         SettingsObserver(Handler handler) {
             super(handler);
@@ -1935,6 +1939,8 @@ public class NotificationManagerService extends SystemService {
             resolver.registerContentObserver(LOCK_SCREEN_ALLOW_PRIVATE_NOTIFICATIONS,
                     false, this, UserHandle.USER_ALL);
             resolver.registerContentObserver(LOCK_SCREEN_SHOW_NOTIFICATIONS,
+                    false, this, UserHandle.USER_ALL);
+            resolver.registerContentObserver(NOTIFICATION_SOUND_VIB_SCREEN_ON,
                     false, this, UserHandle.USER_ALL);
             update(null);
         }
@@ -1982,6 +1988,11 @@ public class NotificationManagerService extends SystemService {
             }
             if (uri == null || LOCK_SCREEN_SHOW_NOTIFICATIONS.equals(uri)) {
                 mPreferencesHelper.updateLockScreenShowNotifications();
+            }
+            if (uri == null || NOTIFICATION_SOUND_VIB_SCREEN_ON.equals(uri)) {
+                mSoundVibScreenOn = Settings.System.getIntForUser(resolver,
+                        Settings.System.NOTIFICATION_SOUND_VIB_SCREEN_ON, 1,
+                        UserHandle.USER_CURRENT) == 1;
             }
         }
     }
@@ -5570,6 +5581,16 @@ public class NotificationManagerService extends SystemService {
             Slog.e(TAG, "exiting pullStats: bad request");
             return 0;
         }
+
+        @Override
+        public void forceShowLedLight(int color) {
+            forceShowLed(color);
+        }
+
+        @Override
+        public void forcePulseLedLight(int color, int onTime, int offTime) {
+            forcePulseLed(color, onTime, offTime);
+        }
     };
 
     protected void checkNotificationListenerAccess() {
@@ -7428,7 +7449,8 @@ public class NotificationManagerService extends SystemService {
         }
 
         if (aboveThreshold && isNotificationForCurrentUser(record)) {
-            if (mSystemReady && mAudioManager != null) {
+            boolean skipSound = mScreenOn && !mSoundVibScreenOn;
+            if (mSystemReady && mAudioManager != null && !skipSound) {
                 Uri soundUri = record.getSound();
                 hasValidSound = soundUri != null && !Uri.EMPTY.equals(soundUri);
                 VibrationEffect vibration = record.getVibration();
@@ -7579,6 +7601,22 @@ public class NotificationManagerService extends SystemService {
         }
         // Light, but only when the screen is off
         return true;
+    }
+
+    private void forceShowLed(int color) {
+        if (color != -1) {
+            mNotificationLight.setColor(color);
+        } else {
+            mNotificationLight.turnOff();
+        }
+    }
+
+    private void forcePulseLed(int color, int onTime, int offTime) {
+        if (color != -1) {
+            mNotificationLight.setFlashing(color, LogicalLight.LIGHT_FLASH_TIMED, onTime, offTime);
+        } else {
+            mNotificationLight.turnOff();
+        }
     }
 
     @GuardedBy("mNotificationLock")

@@ -39,12 +39,14 @@ import android.hardware.fingerprint.IUdfpsOverlayController;
 import android.hardware.fingerprint.IUdfpsOverlayControllerCallback;
 import android.media.AudioAttributes;
 import android.os.Handler;
+import android.os.Looper;
 import android.os.PowerManager;
 import android.os.Process;
 import android.os.RemoteException;
 import android.os.Trace;
 import android.os.VibrationEffect;
 import android.os.Vibrator;
+import android.provider.Settings;
 import android.util.Log;
 import android.view.Gravity;
 import android.view.LayoutInflater;
@@ -58,6 +60,7 @@ import android.view.accessibility.AccessibilityManager;
 import com.android.internal.annotations.VisibleForTesting;
 import com.android.keyguard.KeyguardUpdateMonitor;
 import com.android.systemui.R;
+import com.android.systemui.biometrics.UdfpsHbmTypes.HbmType;
 import com.android.systemui.dagger.SysUISingleton;
 import com.android.systemui.dagger.qualifiers.Main;
 import com.android.systemui.doze.DozeReceiver;
@@ -97,7 +100,7 @@ import kotlin.Unit;
  */
 @SuppressWarnings("deprecation")
 @SysUISingleton
-public class UdfpsController implements DozeReceiver {
+public class UdfpsController implements DozeReceiver, UdfpsHbmProvider {
     private static final String TAG = "UdfpsController";
     private static final long AOD_INTERRUPT_TIMEOUT_MILLIS = 1000;
 
@@ -117,6 +120,7 @@ public class UdfpsController implements DozeReceiver {
     @NonNull private final DumpManager mDumpManager;
     @NonNull private final KeyguardUpdateMonitor mKeyguardUpdateMonitor;
     @Nullable private final Vibrator mVibrator;
+    @NonNull private final Handler mMainHandler;
     @NonNull private final FalsingManager mFalsingManager;
     @NonNull private final PowerManager mPowerManager;
     @NonNull private final AccessibilityManager mAccessibilityManager;
@@ -307,6 +311,19 @@ public class UdfpsController implements DozeReceiver {
                 mView.setDebugMessage(message);
             });
         }
+
+        @Override
+        public void onAcquired(int sensorId, int acquiredInfo, int vendorCode) {
+            mFgExecutor.execute(() -> {
+                if (acquiredInfo == 6 && (mStatusBarStateController.isDozing() || !mScreenOn)) {
+                    if (vendorCode == 22) { // Use overlay to determine pressed vendor code?
+                        mPowerManager.wakeUp(mSystemClock.uptimeMillis(),
+                                PowerManager.WAKE_REASON_GESTURE, TAG);
+                        onAodInterrupt(0, 0, 0, 0); // To-Do pass proper values
+                    }
+                }
+            });
+        }
     }
 
     private static float computePointerSpeed(@NonNull VelocityTracker tracker, int pointerId) {
@@ -402,7 +419,12 @@ public class UdfpsController implements DozeReceiver {
                     // We need to persist its ID to track it during ACTION_MOVE that could include
                     // data for many other pointers because of multi-touch support.
                     mActivePointerId = event.getPointerId(0);
+                    final int idx = mActivePointerId == -1
+                            ? event.getPointerId(0)
+                            : event.findPointerIndex(mActivePointerId);
                     mVelocityTracker.addMovement(event);
+                    onFingerDown((int) event.getRawX(), (int) event.getRawY(),
+                            (int) event.getTouchMinor(idx), (int) event.getTouchMajor(idx));
                     handled = true;
                 }
                 if ((withinSensorArea || fromUdfpsView) && shouldTryToDismissKeyguard()) {
@@ -534,6 +556,7 @@ public class UdfpsController implements DozeReceiver {
         mContext = context;
         mExecution = execution;
         // TODO (b/185124905): inject main handler and vibrator once done prototyping
+        mMainHandler = new Handler(Looper.getMainLooper());
         mVibrator = vibrator;
         mInflater = inflater;
         // The fingerprint manager is queried for UDFPS before this class is constructed, so the
@@ -572,7 +595,7 @@ public class UdfpsController implements DozeReceiver {
         checkArgument(mSensorProps != null);
 
         mCoreLayoutParams = new WindowManager.LayoutParams(
-                WindowManager.LayoutParams.TYPE_KEYGUARD_DIALOG,
+                WindowManager.LayoutParams.TYPE_DISPLAY_OVERLAY,
                 getCoreLayoutParamFlags(),
                 PixelFormat.TRANSLUCENT);
         mCoreLayoutParams.setTitle(TAG);
@@ -596,7 +619,9 @@ public class UdfpsController implements DozeReceiver {
      */
     @VisibleForTesting
     public void playStartHaptic() {
-        if (mVibrator != null) {
+        boolean vibrate = Settings.System.getInt(mContext.getContentResolver(),
+                Settings.System.UDFPS_HAPTIC_FEEDBACK, 1) == 1;
+        if (mVibrator != null && vibrate) {
             mVibrator.vibrate(
                     Process.myUid(),
                     mContext.getOpPackageName(),
@@ -754,7 +779,7 @@ public class UdfpsController implements DozeReceiver {
                 mView = (UdfpsView) mInflater.inflate(R.layout.udfps_view, null, false);
                 mOnFingerDown = false;
                 mView.setSensorProperties(mSensorProps);
-                mView.setHbmProvider(mHbmProvider);
+                mView.setHbmProvider(this);
                 UdfpsAnimationViewController animation = inflateUdfpsAnimation(reason);
                 mAttemptedToDismissKeyguard = false;
                 animation.init();
@@ -1019,5 +1044,22 @@ public class UdfpsController implements DozeReceiver {
          * Called onFingerDown events.
          */
         void onFingerDown();
+    }
+
+    @Override
+    public void enableHbm(@HbmType int hbmType, @Nullable Surface surface,
+            @Nullable Runnable onHbmEnabled) {
+        // TO-DO send call to lineage biometric hal and/or add dummy jni that device could override
+        if (onHbmEnabled != null) {
+            mMainHandler.post(onHbmEnabled);
+        }
+    }
+
+    @Override
+    public void disableHbm(@Nullable Runnable onHbmDisabled) {
+        // TO-DO send call to lineage biometric hal and/or add dummy jni that device could override
+        if (onHbmDisabled != null) {
+            mMainHandler.post(onHbmDisabled);
+        }
     }
 }
