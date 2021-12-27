@@ -5622,25 +5622,25 @@ public final class Settings {
          */
         public static final String SHOW_APP_VOLUME = "show_app_volume";
 		
-	/**
+	    /**
          * Whether to enable spoofing for streaming apps
          * @hide
          */
         public static final String USE_STREAM_SPOOF = "use_stream_spoof";
 		
-	/**
+	    /**
          * Force full screen for devices with cutout
          * @hide
          */
         public static final String FORCE_FULLSCREEN_CUTOUT_APPS = "force_full_screen_cutout_apps";
 		
-	/**
+	    /**
          * Whether to enable Photos unlimited storage
          * @hide
          */
         public static final String USE_PHOTOS_SPOOF = "use_photos_spoof";
 		
-	/**
+	    /**
          * Whether to show volume panel on the left side
          * Defaults to com.android.systemui.R.bool.config_audioPanelOnLeftSide
          * @hide
@@ -5648,6 +5648,20 @@ public final class Settings {
         @Readable
         public static final String VOLUME_PANEL_ON_LEFT = "volume_panel_on_left";
 		
+        /**
+         * GameSpace: List of added games by user
+         * @hide
+         */
+        @Readable
+        public static final String GAMESPACE_GAME_LIST = "gamespace_game_list";
+
+        /**
+         * GameSpace: Whether fullscreen intent will be suppressed while in game session
+         * @hide
+         */
+        @Readable
+        public static final String GAMESPACE_SUPPRESS_FULLSCREEN_INTENT = "gamespace_suppress_fullscreen_intent";
+
         /**
          * These are all public system settings
          *
