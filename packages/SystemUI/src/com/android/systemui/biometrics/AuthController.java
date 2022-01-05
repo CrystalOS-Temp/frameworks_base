@@ -513,7 +513,13 @@ public class AuthController extends SystemUI implements CommandQueue.Callbacks,
                     (float) faceAuthLocation[1]);
         }
 
-        updateFingerprintLocation();
+        boolean isPowerbuttonFps =
+                mFingerprintManager != null && mFingerprintManager.isPowerbuttonFps();
+
+        mFingerprintLocation = new PointF(
+                DisplayUtils.getWidth(mContext) / (isPowerbuttonFps ? 1 : 2),
+                mContext.getResources().getDimensionPixelSize(
+                com.android.systemui.R.dimen.physical_fingerprint_sensor_center_screen_location_y));
 
         IntentFilter filter = new IntentFilter();
         filter.addAction(Intent.ACTION_CLOSE_SYSTEM_DIALOGS);
