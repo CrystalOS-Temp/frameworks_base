@@ -95,8 +95,14 @@ android_library {
         "dagger2",
         "jsr330",
         "lottie",
+        "colorkt",
+        "themelib",
     ],
     manifest: "AndroidManifest.xml",
+
+    libs: [
+        "ims-common",
+    ],
 
     kotlincflags: ["-Xjvm-default=enable"],
 
@@ -186,6 +192,7 @@ android_library {
     libs: [
         "android.test.runner",
         "android.test.base",
+        "ims-common",
     ],
     kotlincflags: ["-Xjvm-default=enable"],
     aaptflags: [
@@ -211,6 +218,10 @@ android_app {
     optimize: {
         proguard_flags_files: ["proguard.flags"],
     },
+
+    libs: [
+        "ims-common",
+    ],
 
     kotlincflags: ["-Xjvm-default=enable"],
 

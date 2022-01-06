@@ -30,10 +30,13 @@ import android.graphics.PointF;
 import android.graphics.Rect;
 import android.graphics.Region;
 import android.hardware.input.InputManager;
+import android.os.AsyncTask;
 import android.os.Looper;
 import android.os.RemoteException;
 import android.os.SystemClock;
 import android.os.SystemProperties;
+import android.os.Vibrator;
+import android.os.VibrationEffect;
 import android.provider.DeviceConfig;
 import android.util.DisplayMetrics;
 import android.util.Log;
@@ -238,6 +241,11 @@ public class EdgeBackGestureHandler extends CurrentUserTracker
     private int mRightInset;
     private int mSysUiFlags;
 
+    private float mEdgeHeightLeft;
+    private float mEdgeHeightRight;
+    private boolean mEdgeHapticEnabled;
+    private final Vibrator mVibrator;
+
     // For Tf-Lite model.
     private BackGestureTfClassifierProvider mBackGestureTfClassifierProvider;
     private Map<String, Integer> mVocab;
@@ -259,6 +267,10 @@ public class EdgeBackGestureHandler extends CurrentUserTracker
             new NavigationEdgeBackPlugin.BackCallback() {
                 @Override
                 public void triggerBack() {
+                    if (mEdgeHapticEnabled) {
+                        vibrateBack(true /* Click */);
+                    }
+
                     // Notify FalsingManager that an intentional gesture has occurred.
                     // TODO(b/186519446): use a different method than isFalseTouch
                     mFalsingManager.isFalseTouch(BACK_GESTURE);
@@ -301,6 +313,7 @@ public class EdgeBackGestureHandler extends CurrentUserTracker
             FalsingManager falsingManager) {
         super(broadcastDispatcher);
         mContext = context;
+        mVibrator = context.getSystemService(Vibrator.class);
         mDisplayId = context.getDisplayId();
         mMainExecutor = executor;
         mOverviewProxyService = overviewProxyService;
@@ -352,8 +365,12 @@ public class EdgeBackGestureHandler extends CurrentUserTracker
         Resources res = mNavigationModeController.getCurrentUserContext().getResources();
         mEdgeWidthLeft = mGestureNavigationSettingsObserver.getLeftSensitivity(res);
         mEdgeWidthRight = mGestureNavigationSettingsObserver.getRightSensitivity(res);
+        mEdgeHapticEnabled = mGestureNavigationSettingsObserver.getEdgeHaptic();
         mIsBackGestureAllowed =
                 !mGestureNavigationSettingsObserver.areNavigationButtonForcedVisible();
+
+        mEdgeHeightLeft = mDisplaySize.y / mGestureNavigationSettingsObserver.getLeftHeight();
+        mEdgeHeightRight = mDisplaySize.y / mGestureNavigationSettingsObserver.getRightHeight();
 
         final DisplayMetrics dm = res.getDisplayMetrics();
         final float defaultGestureHeight = res.getDimension(
@@ -426,6 +443,12 @@ public class EdgeBackGestureHandler extends CurrentUserTracker
         mIsGesturalModeEnabled = QuickStepContract.isGesturalMode(mode);
         updateIsEnabled();
         updateCurrentUserResources();
+    }
+
+    private void vibrateBack(boolean light) {
+            AsyncTask.execute(() ->
+                    mVibrator.vibrate(VibrationEffect.get(light ? VibrationEffect.EFFECT_CLICK :
+                        VibrationEffect.EFFECT_HEAVY_CLICK, true  /* fallback */)));
     }
 
     public void onNavBarTransientStateChanged(boolean isTransient) {
@@ -635,6 +658,15 @@ public class EdgeBackGestureHandler extends CurrentUserTracker
         if (y >= (mDisplaySize.y - mBottomGestureHeight)) {
             return false;
         }
+
+        // Disallow if gesture height is mmore than allowed
+        if ((mIsOnLeftEdge && y < (mDisplaySize.y
+                 - mBottomGestureHeight - (int) mEdgeHeightLeft)) ||
+                 (!mIsOnLeftEdge && y < (mDisplaySize.y
+                 - mBottomGestureHeight - (int) mEdgeHeightRight))) {
+            return false;
+        }
+
         // If the point is way too far (twice the margin), it is
         // not interesting to us for logging purposes, nor we
         // should process it.  Simply return false and keep
@@ -738,6 +770,9 @@ public class EdgeBackGestureHandler extends CurrentUserTracker
     }
 
     private void onMotionEvent(MotionEvent ev) {
+        // Get updated values
+        updateCurrentUserResources();
+
         int action = ev.getActionMasked();
         if (action == MotionEvent.ACTION_DOWN) {
             if (DEBUG_MISSING_GESTURE) {
