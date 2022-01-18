@@ -17287,4 +17287,9 @@ public class ActivityManagerService extends IActivityManager.Stub
             Trace.traceBegin(traceTag, methodName + subInfo);
         }
     }
+
+    @Override
+    public boolean shouldForceCutoutFullscreen(String packageName) {
+        return mActivityTaskManager.shouldForceCutoutFullscreen(packageName);
+    }
 }
