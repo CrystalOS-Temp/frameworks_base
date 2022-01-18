@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-package com.android.internal.util.custom;
+package com.android.internal.util.crystal;
 
 import android.util.Log;
 
