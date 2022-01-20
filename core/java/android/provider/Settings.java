@@ -5445,6 +5445,16 @@ public final class Settings {
         /**
          * Whether to disable showing arrows in statusbar network traffic indicators
          * @hide
+         * Defines the global heads up notification snooze
+         * @hide
+         */
+        public static final String HEADS_UP_NOTIFICATION_SNOOZE = "heads_up_notification_snooze";
+
+        /**
+         * IMPORTANT: If you add a new public settings you also have to add it to
+         * PUBLIC_SETTINGS below. If the new setting is hidden you have to add
+         * it to PRIVATE_SETTINGS below. Also add a validator that can validate
+         * the setting value. See an example above.
          */
         public static final String NETWORK_TRAFFIC_ARROW = "network_traffic_arrow";
 
@@ -15352,6 +15362,10 @@ public final class Settings {
         @Readable
         public static final String MAX_SOUND_TRIGGER_DETECTION_SERVICE_OPS_PER_DAY =
                 "max_sound_trigger_detection_service_ops_per_day";
+        /**
+         * @hide
+         */
+        public static final String SHOW_CPU_OVERLAY = "show_cpu_overlay";
 
         /**
          * Indicates whether aware is available in the current location.
@@ -15399,6 +15413,12 @@ public final class Settings {
         @Readable
         public static final String KEY_CHORD_POWER_VOLUME_UP =
                 "key_chord_power_volume_up";
+
+        /**
+         * @hide
+         */
+        public static final String SHOW_FPS_OVERLAY = "show_fps_overlay";
+
 
         /**
          * Keyguard should be on the left hand side of the screen, for wide screen layouts.
