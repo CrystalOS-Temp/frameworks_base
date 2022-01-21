@@ -5727,7 +5727,9 @@ public class ActivityTaskManagerService extends IActivityTaskManager.Stub {
                 mAppWarnings.onPackageUninstalled(name);
                 mCompatModePackages.handlePackageUninstalledLocked(name);
                 mPackageConfigPersister.onPackageUninstall(name);
-                mGamingModeHelper.onPackageUninstalled(name);
+                if (mGamingModeHelper != null) {
+                    mGamingModeHelper.onPackageUninstalled(name);
+                }
             }
         }
 
