@@ -46,4 +46,7 @@
     <string name="reboot_title">Újraindítás</string>
     <string name="reboot_message">A rendszer újraindítása</string>
 
+    <!-- App lock -->
+    <string name="unlock_application"><xliff:g id="label" example="Telegram">%1$s</xliff:g> feloldása</string>
+
 </resources>
