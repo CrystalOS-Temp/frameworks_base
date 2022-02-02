@@ -5469,19 +5469,25 @@ public final class Settings {
          */
         public static final String VIBRATE_ON_CONNECT = "vibrate_on_connect";
 
-         /**
+        /**
          * Whether the phone vibrates on call waiting
          * @hide
          */
         public static final String VIBRATE_ON_CALLWAITING = "vibrate_on_callwaiting";
 
-         /**
+        /**
          * Whether the phone vibrates on disconnect
          * @hide
          */
         public static final String VIBRATE_ON_DISCONNECT = "vibrate_on_disconnect";
 
-       /**
+        /**
+         * Show app volume rows in volume panel
+         * @hide
+         */
+        public static final String SHOW_APP_VOLUME = "show_app_volume";
+		
+	/**
          * These are all public system settings
          *
          * @hide
