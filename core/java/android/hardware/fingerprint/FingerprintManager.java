@@ -1046,10 +1046,7 @@ public class FingerprintManager implements BiometricAuthenticator, BiometricFing
      */
     public boolean isPowerbuttonFps() {
         final FingerprintSensorPropertiesInternal sensorProps = getFirstFingerprintSensor();
-        if (sensorProps != null) {
-            return sensorProps.sensorType == TYPE_POWER_BUTTON;
-        }
-        return false;
+        return sensorProps.sensorType == TYPE_POWER_BUTTON;
     }
 
     /**
