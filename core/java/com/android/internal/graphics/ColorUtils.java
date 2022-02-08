@@ -21,6 +21,7 @@ import android.annotation.FloatRange;
 import android.annotation.IntRange;
 import android.annotation.NonNull;
 import android.graphics.Color;
+import android.util.MathUtils;
 
 import com.android.internal.graphics.cam.Cam;
 
@@ -600,6 +601,56 @@ public final class ColorUtils {
         return component > XYZ_EPSILON
                 ? Math.pow(component, 1 / 3.0)
                 : (XYZ_KAPPA * component + 16) / 116;
+    }
+
+    private static float cube(float x) {
+        return x * x * x;
+    }
+
+    // Linear -> sRGB
+    private static float srgbTransfer(float x) {
+        if (x >= 0.0031308f) {
+            return 1.055f * (float) Math.pow(x, 1.0f / 2.4f) - 0.055f;
+        } else {
+            return 12.92f * x;
+        }
+    }
+
+    // sRGB -> linear
+    private static float srgbTransferInv(float x) {
+        if (x >= 0.04045f) {
+            return (float) Math.pow((x + 0.055f) / 1.055f, 2.4f);
+        } else {
+            return x / 12.92f;
+        }
+    }
+
+    private static float srgbRed(@ColorInt int color) {
+        return srgbTransferInv(((float) Color.red(color)) / 255.0f);
+    }
+
+    private static float srgbGreen(@ColorInt int color) {
+        return srgbTransferInv(((float) Color.green(color)) / 255.0f);
+    }
+
+    private static float srgbBlue(@ColorInt int color) {
+        return srgbTransferInv(((float) Color.blue(color)) / 255.0f);
+    }
+
+    private static int srgbTransferToInt(float c) {
+        return MathUtils.constrain(Math.round(srgbTransfer(c) * 255.0f), 0, 255);
+    }
+
+    private static float rgbToOklabLp(float r, float g, float b) {
+        return (float) Math.cbrt(0.4122214708f * r + 0.5363325363f * g + 0.0514459929f * b);
+    }
+
+    private static float rgbToOklabMp(float r, float g, float b) {
+        return (float) Math.cbrt(0.2119034982f * r + 0.6806995451f * g + 0.1073969566f * b);
+    }
+
+    private static float rgbToOklabSp(float r, float g, float b) {
+        return (float) Math.cbrt(0.0883024619f * r + 0.2817188376f * g + 0.6299787005f * b);
     }
 
     /**
