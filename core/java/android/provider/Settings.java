@@ -5487,7 +5487,13 @@ public final class Settings {
          */
         public static final String SHOW_APP_VOLUME = "show_app_volume";
 		
-		/**
+	/**
+         * Whether to enable spoofing for streaming apps
+         * @hide
+         */
+        public static final String USE_STREAM_SPOOF = "use_stream_spoof";
+		
+	/**
          * Force full screen for devices with cutout
          * @hide
          */
