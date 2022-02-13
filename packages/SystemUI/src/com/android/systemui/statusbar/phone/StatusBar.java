@@ -1363,9 +1363,8 @@ public class StatusBar extends SystemUI implements DemoMode,
                         updateScrimController();
                     });
             fragmentHostManager.addTagListener(QS.TAG, (tag, f) -> {
-                QS qs = (QS) f;
-                if (qs instanceof QSFragment) {
-                    mQSPanelController = ((QSFragment) qs).getQSPanelController();
+                if (f instanceof QSFragment) {
+                    mQSPanelController = ((QSFragment) f).getQSPanelController();
                     mQSPanelController.setBrightnessMirror(mBrightnessMirrorController);
                 }
             });
@@ -1425,8 +1424,6 @@ public class StatusBar extends SystemUI implements DemoMode,
 
         // Private API call to make the shadows look better for Recents
         ThreadedRenderer.overrideProperty("ambientRatio", String.valueOf(1.5f));
-
-        mFlashlightController = Dependency.get(FlashlightController.class);
 
         mMinBrightness = mPowerManager.getMinimumScreenBrightnessSetting();
         mMaxBrightness = mPowerManager.getMaximumScreenBrightnessSetting();
