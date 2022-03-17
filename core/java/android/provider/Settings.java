@@ -5589,12 +5589,30 @@ public final class Settings {
          */
         public static final String GAMING_MODE_DISABLE_ADB = "gaming_mode_disable_adb";
 
-	/**
+		/**
          * Settings Dashboard Style
          * @hide
          */
-        public static final String SETTINGS_DASHBOARD_GMS = "settings_dashboard_gms";
+        public static final String SETTINGS_DASHBOARD_STYLE = "settings_dashboard_style";
 
+		/**
+		 * Settings Base Layout
+		 * @hide
+		 */
+		public static final String ALT_SETTINGS_LAYOUT = "alt_settings_layout";
+				
+		/**
+		 * Settings Homepage Layout
+		 * @hide
+		 */
+		public static final String USE_STOCK_LAYOUT = "use_stock_layout";
+				
+		/**
+		 * Settings UserCard
+		 * @hide
+		 */
+		public static final String DISABLE_USERCARD = "disable_usercard";
+		
         /**
          * Keys we no longer back up under the current schema, but want to continue to
          * process when restoring historical backup datasets.
