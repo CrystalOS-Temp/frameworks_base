@@ -17,16 +17,26 @@
 package com.android.internal.crystal.util;
 
 import android.Manifest;
+import android.app.AlertDialog;
+import android.app.IActivityManager;
+import android.app.ActivityManager;
 import android.content.Context;
 import android.content.res.Resources;
 import android.content.Intent;
 import android.content.pm.PackageInfo;
 import android.content.pm.PackageManager;
 import android.content.pm.PackageManager.NameNotFoundException;
-import android.hardware.input.InputManager;
+import android.content.DialogInterface;
+import android.graphics.Point;
+import android.graphics.Rect;
+import android.hardware.camera2.CameraAccessException;
+import android.hardware.camera2.CameraCharacteristics;
+import android.hardware.camera2.CameraManager;
 import android.hardware.fingerprint.FingerprintManager;
 import android.hardware.input.InputManager;
+import android.hardware.input.InputManager;
 import android.hardware.fingerprint.FingerprintManager;
+import android.os.AsyncTask;
 import android.os.Handler;
 import android.os.Looper;
 import android.os.PowerManager;
@@ -241,5 +251,49 @@ public class CrystalUtils {
         boolean maskDisplayCutout = context.getResources().getBoolean(R.bool.config_maskMainBuiltInDisplayCutout);
         boolean displayCutoutExists = (!TextUtils.isEmpty(displayCutout) && !maskDisplayCutout);
         return displayCutoutExists;
+    }
+
+   public static void showSettingsRestartDialog(Context context) {
+        new AlertDialog.Builder(context)
+                .setTitle(R.string.settings_restart_title)
+                .setMessage(R.string.settings_restart_message)
+                .setPositiveButton(R.string.ok, new DialogInterface.OnClickListener() {
+                    public void onClick(DialogInterface dialog, int id) {
+                        restartSettings(context);
+                    }
+                })
+                .setNegativeButton(R.string.cancel, null)
+                .show();
+    }
+
+    public static void restartSettings(Context context) {
+        new restartSettingsTask(context).execute();
+    }
+
+    private static class restartSettingsTask extends AsyncTask<Void, Void, Void> {
+        private Context mContext;
+
+        public restartSettingsTask(Context context) {
+            super();
+            mContext = context;
+        }
+
+        @Override
+        protected Void doInBackground(Void... params) {
+            try {
+                ActivityManager am =
+                        (ActivityManager) mContext.getSystemService(Context.ACTIVITY_SERVICE);
+                IActivityManager ams = ActivityManager.getService();
+                for (ActivityManager.RunningAppProcessInfo app: am.getRunningAppProcesses()) {
+                    if ("com.android.settings".equals(app.processName)) {
+                    	ams.killApplicationProcess(app.processName, app.uid);
+                        break;
+                    }
+                }
+            } catch (Exception e) {
+                e.printStackTrace();
+            }
+            return null;
+        }
     }
 }
