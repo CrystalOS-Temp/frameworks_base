@@ -749,6 +749,25 @@ public class VolumeDialogImpl implements VolumeDialog,
         mRingerCount = mShowVibrate ? 3 : 2;
     }
 
+    // Helper to set gravity.
+    private void setGravity(ViewGroup viewGroup, int gravity) {
+        if (viewGroup instanceof LinearLayout) {
+            ((LinearLayout) viewGroup).setGravity(gravity);
+        }
+    }
+
+    // Helper to set layout gravity.
+    private void setLayoutGravity(ViewGroup viewGroup, int gravity) {
+        if (viewGroup != null) {
+            Object obj = viewGroup.getLayoutParams();
+            if (obj instanceof FrameLayout.LayoutParams) {
+                ((FrameLayout.LayoutParams) obj).gravity = gravity;
+            } else if (obj instanceof LinearLayout.LayoutParams) {
+                ((LinearLayout.LayoutParams) obj).gravity = gravity;
+            }
+        }
+    }
+
     protected ViewGroup getDialogView() {
         return mDialogView;
     }
@@ -1722,8 +1741,10 @@ public class VolumeDialogImpl implements VolumeDialog,
             trimObsoleteH();
         }
 
+        boolean isOutmostIndexMax = mVolumePanelOnLeft ? isRtl() : !isRtl();
+
         // Index of the last row that is actually visible.
-        int rightmostVisibleRowIndex = !isRtl() ? -1 : Short.MAX_VALUE;
+        int outmostVisibleRowIndex = isOutmostIndexMax ? -1 : Short.MAX_VALUE;
 
         // apply changes to all rows
         for (final VolumeRow row : mRows) {
@@ -1741,12 +1762,9 @@ public class VolumeDialogImpl implements VolumeDialog,
                     && mRingerAndDrawerContainerBackground != null) {
                 // For RTL, the outmost row has the lowest index since child views are laid out
                 // from right to left.
-                rightmostVisibleRowIndex =
-                        !isRtl()
-                                ? Math.max(rightmostVisibleRowIndex,
-                                mDialogRowsView.indexOfChild(row.view))
-                                : Math.min(rightmostVisibleRowIndex,
-                                        mDialogRowsView.indexOfChild(row.view));
+                outmostVisibleRowIndex = isOutmostIndexMax
+                        ? Math.max(outmostVisibleRowIndex, mDialogRowsView.indexOfChild(row.view))
+                        : Math.min(outmostVisibleRowIndex, mDialogRowsView.indexOfChild(row.view));
 
                 // Add spacing between each of the visible rows - we'll remove the spacing from the
                 // last row after the loop.
@@ -1754,7 +1772,7 @@ public class VolumeDialogImpl implements VolumeDialog,
                 if (layoutParams instanceof LinearLayout.LayoutParams) {
                     final LinearLayout.LayoutParams linearLayoutParams =
                             ((LinearLayout.LayoutParams) layoutParams);
-                    if (!isRtl()) {
+                    if (isOutmostIndexMax) {
                         linearLayoutParams.setMarginEnd(mRingerRowsPadding);
                     } else {
                         linearLayoutParams.setMarginStart(mRingerRowsPadding);
@@ -1773,8 +1791,8 @@ public class VolumeDialogImpl implements VolumeDialog,
             }
         }
 
-        if (rightmostVisibleRowIndex > -1 && rightmostVisibleRowIndex < Short.MAX_VALUE) {
-            final View lastVisibleChild = mDialogRowsView.getChildAt(rightmostVisibleRowIndex);
+        if (outmostVisibleRowIndex > -1 && outmostVisibleRowIndex < Short.MAX_VALUE) {
+            final View lastVisibleChild = mDialogRowsView.getChildAt(outmostVisibleRowIndex);
             final ViewGroup.LayoutParams layoutParams = lastVisibleChild.getLayoutParams();
             // Remove the spacing on the last row, and remove its background since the container is
             // drawing a background for this row.
