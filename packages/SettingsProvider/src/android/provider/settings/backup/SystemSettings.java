@@ -87,7 +87,7 @@ public class SystemSettings {
         Settings.System.FLASHLIGHT_ON_CALL,
         Settings.System.FLASHLIGHT_ON_CALL_IGNORE_DND,
         Settings.System.FLASHLIGHT_ON_CALL_RATE,
-        Settings.System.VOLUME_PANEL_ON_LEFT,
         Settings.System.SCREEN_OFF_ANIMATION,
+        Settings.System.VOLUME_PANEL_ON_LEFT,
     };
 }
