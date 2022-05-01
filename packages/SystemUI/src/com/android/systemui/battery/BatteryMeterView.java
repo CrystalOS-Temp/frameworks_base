@@ -328,7 +328,7 @@ public class BatteryMeterView extends LinearLayout implements DarkReceiver {
     /**
      * Looks up the scale factor for status bar icons and scales the battery view by that amount.
      */
-    private void scaleBatteryMeterViews() {
+    void scaleBatteryMeterViews() {
         if (mBatteryIconView == null) {
             return;
         }
