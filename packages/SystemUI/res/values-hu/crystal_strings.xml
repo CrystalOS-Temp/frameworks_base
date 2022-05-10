@@ -1,0 +1,99 @@
+<?xml version="1.0" encoding="utf-8"?>
+
+<resources xmlns:xliff="urn:oasis:names:tc:xliff:document:1.2">
+
+    <!-- Label for UI element which allows deleting the screenshot [CHAR LIMIT=30] -->
+    <string name="screenshot_delete_label">Törlés</string>
+    <!-- Content description indicating that tapping the element will allow deleting the screenshot [CHAR LIMIT=NONE]
+ -->
+    <string name="screenshot_delete_description">Képernyőkép törlése</string>
+
+    <!-- Caffeine QS Tile -->
+    <string name="quick_settings_caffeine_label">Koffein</string>
+    <string name="accessibility_quick_settings_caffeine_off">Koffein ki</string>
+    <string name="accessibility_quick_settings_caffeine_on">Koffein be</string>
+
+    <!-- Ambient display QS tile -->
+    <string name="quick_settings_ambient_display_label">Környezeti kijelző</string>
+    <string name="accessibility_quick_settings_ambient_display_off">Környezeti Kijelző ki.</string>
+    <string name="accessibility_quick_settings_ambient_display_on">Környezeti Kijelző be.</string>
+    <string name="accessibility_quick_settings_ambient_display_changed_off">Környezeti Kijelző kikapcsolva.</string>
+    <string name="accessibility_quick_settings_ambient_display_changed_on">Környezeti Kijelző bekapcsolva.</string>
+
+    <!-- USB tethering QS tile -->
+    <string name="quick_settings_usb_tether_label">USB megosztás</string>
+
+    <!-- Sync QS Tile -->
+    <string name="quick_settings_sync_label">Szinkronizáció</string>
+    <string name="accessibility_quick_settings_sync_off">Szinkronizáció ki</string>
+    <string name="accessibility_quick_settings_sync_on">Szinkronizáció be</string>
+    <string name="accessibility_quick_settings_sync_changed_off">Szinkronizáció kikapcsolva</string>
+    <string name="accessibility_quick_settings_sync_changed_on">Szinkronizáció bekapcsolva</string>
+
+    <!-- Sound QS Tile -->
+    <string name="quick_settings_sound_label">Hang</string>
+    <string name="quick_settings_sound_ring">Csörgés</string>
+    <string name="quick_settings_sound_vibrate">Rezgés</string>
+    <string name="quick_settings_sound_mute">Néma</string>
+
+    <!-- Screenshot QS tile -->
+    <string name="quick_settings_full_screenshot_label">Teljes</string>
+    <string name="quick_settings_screenshot_label">Képernyőkép</string>
+    <string name="quick_settings_region_screenshot_label">Részleges</string>
+
+   <!-- Poweroff/Reboot/Recovery QS tile -->
+    <string name="quick_settings_poweroff_label">Kikapcsolás</string>
+    <string name="quick_settings_reboot_label">Újraindítás</string>
+    <string name="quick_settings_reboot_recovery_label">Recovery</string>
+
+    <!-- Refresh Rate Tile -->
+    <string name="refresh_rate_tile_label">Képernyőfrissítés</string>
+    <string name="auto_mode_label">Automatikus</string>
+
+    <!-- Heads Up QS Tile -->
+    <string name="quick_settings_heads_up_label">Heads up</string>
+    <string name="accessibility_quick_settings_heads_up_off">Heads up ki.</string>
+    <string name="accessibility_quick_settings_heads_up_on">Heads up be.</string>
+    <string name="accessibility_quick_settings_heads_up_changed_off">Heads up kikapcsolva.</string>
+    <string name="accessibility_quick_settings_heads_up_changed_on">Heads up turned bekapcsolva.</string>
+    
+    <!-- DataSwitch Tile -->
+    <string name="qs_data_switch_label">Adat kártya váltás</string>
+    <string name="qs_data_switch_changed_1">SIM 1 használata mobilnethez</string>
+    <string name="qs_data_switch_changed_2">SIM 2 használata mobilnethez</string>
+
+    <!-- Kill button in notification guts -->
+    <string name="force_stop_dlg_title">Be akarja zárni erőltetetten az alkalmazást?</string>
+    <string name="force_stop_dlg_text">Ha erőltetetten bezár egy alkalmazást, az hibásan működhet.</string>
+    <string name="dlg_ok">@android:string/ok</string>
+    <string name="dlg_cancel">@android:string/cancel</string>
+    <string name="guts_force_close_app">Alkalmazás Bezárása</string>
+
+    <!-- FPS Info tile -->
+    <string name="quick_settings_fpsinfo_label">FPS Infó</string>
+    <string name="accessibility_quick_settings_fpsinfo_off">FPS Infó ki</string>
+    <string name="accessibility_quick_settings_fpsinfo_on">FPS Infó be</string>
+
+    <!-- Indication on the keyguard that is shown when the device is charging with a dash charger. Should match keyguard_plugged_in_dash_charging [CHAR LIMIT=40]-->
+    <string name="keyguard_indication_dash_charging_time"><xliff:g id="percentage">%2$s</xliff:g> • Dash Töltés (<xliff:g id="charging_time_left" example="4 hours and 2 minutes">%1$s</xliff:g> a teljes töltöttségig)</string>
+    <string name="keyguard_plugged_in_dash_charging"><xliff:g id="percentage">%s</xliff:g> • Dash Töltés</string>
+
+    <!-- Indication on the keyguard that is shown when the device is charging with a warp charger. Should match keyguard_plugged_in_warp_charging [CHAR LIMIT=40]-->
+    <string name="keyguard_indication_warp_charging_time"><xliff:g id="percentage">%2$s</xliff:g> • Warp Töltés (<xliff:g id="charging_time_left" example="4 hours and 2 minutes">%1$s</xliff:g> a teljes töltöttségig)</string>
+    <string name="keyguard_plugged_in_warp_charging"><xliff:g id="percentage">%s</xliff:g> • Warp Töltés</string>
+
+    <!-- AOD QS tile -->
+    <string name="quick_settings_aod_label">AOD</string>
+    <string name="quick_settings_aod_off_powersave_label">AOD ki\nAkkumulátorkímélő</string>
+
+    <!-- Advanced Reboot -->
+    <string name="global_action_restart_advanced">Haladó</string>
+    <string name="global_action_restart_recovery">Recovery</string>
+    <string name="global_action_restart_bootloader">Bootloader</string>
+    <string name="global_action_restart_ui">RendszerUI</string>
+
+    <!-- Gaming mode -->
+    <string name="gaming_mode_not_enabled">A Játék Mód ki van kapcsolva a Beállításokban</string>
+    <string name="quick_settings_gaming_mode_label">Játék Mód</string>
+
+</resources>
