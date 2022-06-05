@@ -4840,6 +4840,7 @@ public class Intent implements Parcelable, Cloneable {
             "android.intent.action.SCREEN_CAMERA_GESTURE";
 
 
+
     // ---------------------------------------------------------------------
     // ---------------------------------------------------------------------
     // Standard intent categories (see addCategory()).
