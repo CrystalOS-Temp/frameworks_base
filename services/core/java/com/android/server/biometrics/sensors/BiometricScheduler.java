@@ -59,6 +59,9 @@ import java.util.Locale;
 public class BiometricScheduler {
 
     private static final String BASE_TAG = "BiometricScheduler";
+
+    private boolean mCancel;
+
     // Number of recent operations to keep in our logs for dumpsys
     protected static final int LOG_NUM_RECENT_OPERATIONS = 50;
 
@@ -257,8 +260,13 @@ public class BiometricScheduler {
 
     protected void startNextOperationIfIdle() {
         if (mCurrentOperation != null) {
-            Slog.v(getTag(), "Not idle, cancelling current operation: " + mCurrentOperation);
-            cancelInternal(mCurrentOperation);
+            if(mCancel) {
+               Slog.v(getTag(), "Not idle, cancelling current operation: " + mCurrentOperation);
+               mCurrentOperation.cancel(mHandler, mInternalCallback);
+            } else {
+               Slog.v(getTag(), "Not idle, current operation: " + mCurrentOperation);
+               return;
+            }
         }
         if (mPendingOperations.isEmpty()) {
             Slog.d(getTag(), "No operations, returning to idle");
