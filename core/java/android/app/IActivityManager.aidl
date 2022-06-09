@@ -436,11 +436,11 @@ interface IActivityManager {
 	void requestInteractiveBugReportWithDescription(in String shareTitle,
 			in String shareDescription);
 
-	void requestInteractiveBugReport();
-	void requestFullBugReport();
-	void requestRemoteBugReport();
-	boolean launchBugReportHandlerApp();
-	List<String> getBugreportWhitelistedPackages();
+    void requestInteractiveBugReport();
+    void requestFullBugReport();
+    void requestRemoteBugReport(long nonce);
+    boolean launchBugReportHandlerApp();
+    List<String> getBugreportWhitelistedPackages();
 
 	@UnsupportedAppUsage
 	Intent getIntentForIntentSender(in IIntentSender sender);

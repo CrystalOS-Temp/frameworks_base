@@ -112,7 +112,6 @@ public class QuickQSPanelController extends QSPanelControllerBase<QuickQSPanel> 
         });
 
         mView.addOnConfigurationChangedListener(mOnConfigurationChangedListener);
-        mBrightnessMirrorHandler.onQsPanelAttached();
     }
 
     @Override
@@ -121,7 +120,6 @@ public class QuickQSPanelController extends QSPanelControllerBase<QuickQSPanel> 
         mTunerService.removeTunable(mView);
         mView.setBrightnessRunnable(null);
         mView.removeOnConfigurationChangedListener(mOnConfigurationChangedListener);
-        mBrightnessMirrorHandler.onQsPanelDettached();
     }
 
     private void updateBrightnessMirror() {
@@ -151,12 +149,6 @@ public class QuickQSPanelController extends QSPanelControllerBase<QuickQSPanel> 
     private void setMaxTiles(int parseNumTiles) {
         mView.setMaxTiles(parseNumTiles);
         setTiles();
-    }
-
-    @Override
-    public void refreshAllTiles() {
-        mBrightnessController.checkRestrictionAndSetEnabled();
-        super.refreshAllTiles();
     }
 
     @Override
