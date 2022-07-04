@@ -203,7 +203,6 @@ public class PixelPropsUtils {
     public static void setProps(Application app) {
         final String packageName = app.getPackageName();
         final String processName = app.getProcessName();
-
         if (packageName == null) {
             return;
         }
@@ -248,6 +247,12 @@ public class PixelPropsUtils {
             if (packageName.equals(PACKAGE_GMS) &&
                     processName.equals(PACKAGE_GMS + ".unstable")) {
                 sIsGms = true;
+            }
+            if (isPixelDevice) {
+                if (packageName.equals(PACKAGE_GMS) &&
+                        processName.equals(PACKAGE_GMS + ".unstable")) {
+                    setPropValue("MODEL", Build.MODEL + " ");
+                }
             }
             // Set proper indexing fingerprint
             if (packageName.equals(PACKAGE_SETTINGS_SERVICES)) {
